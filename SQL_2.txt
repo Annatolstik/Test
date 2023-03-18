@@ -1,0 +1,20 @@
+--Посчитать по месяцам 2019 года  значение profit в разрезе product_country
+--notes: не учитывать отмененные заказы
+SELECT b.product_country, ROUND(SUM(a.profit)::numeric, 1) as total_profit, 
+date_part('year', a.order_date) as year, date_part('month', a.order_date) as month 
+from sample as a 
+LEFT  JOIN product_country AS b ON a.product_name = b.product_name
+WHERE date_part('year', a.order_date)=2019  and a.order_id NOT IN (select order_id from retuned)
+GROUP BY 1, 3, 4
+ORDER BY 4
+
+
+--Выбрать топ-5 самых лучших стран-импортеров за весь 2019 год по суммарному profit
+--notes: не учитывать отмененные заказы 
+SELECT b.product_country, ROUND(SUM(a.profit)::numeric, 1) as total_profit
+from sample as a
+LEFT  JOIN product_country AS b ON a.product_name = b.product_name
+WHERE date_part('year', order_date)=2019  and order_id NOT IN (select order_id from retuned) 
+GROUP BY 1
+ORDER BY 2 DESC 
+limit 5
